@@ -1,0 +1,622 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>COMMAND CENTER // DIGITAL DOPPELGÄNGER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #a020f0;  
+            --primary-dim: rgba(160, 32, 240, 0.1);
+            --secondary: #00ffff; 
+            --secondary-dim: rgba(0, 255, 255, 0.1);
+            --ai-color: #39ff14; 
+            --bg: #030305;
+            --panel-bg: rgba(8, 8, 10, 0.95);
+            --success: #00ffaa;
+            --error: #ff0055;
+            
+            --font-head: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
+            --font-code: 'Share Tech Mono', monospace;
+        }
+
+        body.theme-red { --primary: #ff0055; --secondary: #ff4400; --ai-color: #ffaa00; }
+        body.theme-green { --primary: #005500; --secondary: #39ff14; --ai-color: #00ffaa; }
+        body.theme-gold { --primary: #b8860b; --secondary: #ffd700; --ai-color: #ffffff; }
+        body.theme-purple { --primary: #aa00ff; --secondary: #ff00ff; --ai-color: #ff00ff; }
+        body.theme-noir { --primary: #888; --secondary: #fff; --ai-color: #ccc; --bg: #000; }
+
+        * { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--primary) #111; cursor: crosshair; }
+
+        a, button, .psyche-card, .msg.ai { cursor: pointer; }
+
+        body {
+            margin: 0; padding: 0; background-color: var(--bg); color: var(--secondary);
+            font-family: var(--font-body); 
+            min-height: 100vh; overflow-y: auto; overflow-x: hidden;
+            opacity: 0; transition: opacity 0.8s ease;
+        }
+        body.auth-active { opacity: 1; }
+
+        .cyber-grid {
+            position: fixed; top: 0; left: 0; width: 200vw; height: 200vh;
+            background-image: linear-gradient(var(--primary-dim) 1px, transparent 1px), linear-gradient(90deg, var(--primary-dim) 1px, transparent 1px);
+            background-size: 50px 50px; background-position: center center;
+            transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+            animation: grid-move 10s linear infinite; z-index: -2; opacity: 0.3; pointer-events: none;
+        }
+        @keyframes grid-move { 0% { background-position: 0 0; } 100% { background-position: 0 50px; } }
+
+        .main-container {
+            max-width: 1400px; margin: 0 auto; padding: 90px 20px 40px;
+            display: flex; flex-direction: column; gap: 30px; padding-bottom: 100px; 
+        }
+
+        .header {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(3, 3, 5, 0.95); border-bottom: 1px solid var(--primary);
+            padding: 0 20px; height: 70px; backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        
+        .header-left { display: flex; align-items: center; gap: 30px; }
+        .brand { font-family: var(--font-head); font-size: 1.2rem; color: #fff; letter-spacing: 2px; text-shadow: 0 0 10px var(--primary); }
+        .nav-group { display: flex; gap: 10px; }
+        .nav-link { 
+            color: var(--secondary); text-decoration: none; border: 1px solid var(--secondary); 
+            padding: 5px 10px; font-family: var(--font-code); 
+            transition: 0.3s; font-size: 0.7rem; display: flex; align-items: center;
+        }
+        .nav-link:hover { background: var(--secondary); color: #000; }
+        
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .currency-badge { color: var(--success); font-family: var(--font-code); border: 1px solid var(--success); padding: 5px 10px; }
+        .user-badge { font-family: var(--font-code); color: #fff; opacity: 0.7; }
+        .logout-btn { 
+            background: var(--error); color: #fff; border: none; padding: 8px 15px; 
+            font-family: var(--font-head); font-size: 0.8rem;
+            transition: 0.3s; clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+        }
+        .logout-btn:hover { background: #ff4477; box-shadow: 0 0 15px var(--error); }
+
+        .panel { background: var(--panel-bg); border: 1px solid var(--primary-dim); position: relative; overflow: hidden; padding: 2px; }
+        .panel-content { background: rgba(10, 10, 15, 0.85); padding: 20px; height: 100%; display: flex; flex-direction: column; }
+        .panel-header { background: linear-gradient(90deg, var(--primary-dim), transparent); color: #fff; padding: 10px; margin-bottom: 15px; font-family: var(--font-head); border-left: 3px solid var(--secondary); display: flex; justify-content: space-between; }
+        .corner-deco { position: absolute; width: 15px; height: 15px; border: 2px solid var(--secondary); pointer-events: none; z-index: 5; }
+        .tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+        .bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+
+        .sector-command { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; height: 650px; }
+        #chat-feed { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 20px; }
+        
+        .msg { padding: 15px; font-size: 1rem; max-width: 85%; line-height: 1.6; position: relative; transition: 0.3s; }
+        .msg.user { border-right: 3px solid var(--primary); background: linear-gradient(90deg, transparent, rgba(160, 32, 240, 0.1)); align-self: flex-end; text-align: right; color: #ddd; animation: fadeLeft 0.3s ease-out; }
+        .msg.ai { border-left: 3px solid var(--ai-color); background: rgba(0, 20, 0, 0.6); align-self: flex-start; color: var(--ai-color); font-family: var(--font-code); text-shadow: 0 0 3px rgba(57, 255, 20, 0.4); background-image: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.25) 50%); background-size: 100% 4px; }
+        .msg.ai:hover { background: rgba(0, 50, 0, 0.8); box-shadow: 0 0 15px var(--ai-dim); transform: translateX(5px); }
+        .msg-timestamp { font-size: 0.6rem; color: #666; display: block; margin-bottom: 5px; font-family: var(--font-head); letter-spacing: 1px; }
+
+        .chat-input-box { display: flex; padding-top: 15px; border-top: 1px solid #333; gap: 10px; }
+        .chat-input { flex-grow: 1; background: #050505; border: 1px solid #333; color: #fff; font-family: var(--font-code); padding: 12px; outline: none; transition: 0.3s; }
+        .chat-input:focus { border-color: var(--secondary); box-shadow: 0 0 15px rgba(0, 255, 255, 0.1); }
+        .send-btn { background: var(--primary); border: none; padding: 0 30px; color: #fff; font-family: var(--font-head); transition: 0.3s; clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px); }
+        .send-btn:hover { background: var(--secondary); color: #000; }
+        .cursor-blink { animation: blink 1s infinite; display: inline-block; width: 8px; height: 15px; background: var(--ai-color); vertical-align: middle; margin-left: 5px; }
+
+        .stats-grid { display: grid; grid-template-rows: auto 1fr; gap: 20px; }
+        .gauges-container { display: flex; justify-content: space-around; padding: 20px 0; border-bottom: 1px solid #333; }
+        .gauge-wrapper { text-align: center; position: relative; }
+        .gauge-bg { fill: none; stroke: #222; stroke-width: 3; }
+        .gauge-fill { fill: none; stroke-width: 3; transition: stroke-dasharray 1s ease; }
+        .gauge-value { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; font-family: var(--font-code); font-weight: bold; }
+        
+        .globe-container { position: relative; flex-grow: 1; background: #000; overflow: hidden; border: 1px solid #222; }
+        #three-container { width: 100%; height: 100%; display: block; }
+        #globe-status-overlay { position: absolute; bottom: 10px; left: 10px; font-family: var(--font-code); font-size: 0.8rem; color: var(--secondary); text-shadow: 0 0 5px var(--secondary); background: rgba(0,0,0,0.7); padding: 5px; border-left: 2px solid var(--secondary); pointer-events: none; z-index: 10; }
+
+        .sector-psyche { min-height: 400px; }
+        .scan-controls { text-align: center; margin-bottom: 20px; }
+        .scan-btn { background: linear-gradient(90deg, var(--primary), var(--secondary)); border: none; padding: 15px 50px; font-family: var(--font-head); font-size: 1.2rem; color: #000; font-weight: bold; clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%, 0 20px); transition: 0.3s; box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); }
+        .scan-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .psyche-card { background: rgba(255, 255, 255, 0.02); border: 1px solid #333; padding: 20px; transition: 0.3s; cursor: pointer; position: relative; }
+        .psyche-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.05); border-color: var(--secondary); box-shadow: 0 0 15px rgba(0,255,255,0.1); }
+        .card-pro { border-top: 4px solid var(--success); }
+        .card-con { border-top: 4px solid var(--error); }
+        .card-title { font-family: var(--font-head); margin-bottom: 10px; color: #fff; }
+        .card-desc { font-size: 0.9rem; color: #aaa; margin-bottom: 10px; }
+        .card-advice { font-size: 0.8rem; color: var(--secondary); font-style: italic; border-top: 1px solid #333; padding-top: 5px; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 5000; display: none; justify-content: center; align-items: center; }
+        .modal-content { background: var(--panel-bg); border: 2px solid var(--primary); padding: 40px; max-width: 600px; width: 90%; position: relative; box-shadow: 0 0 50px rgba(160,32,240,0.3); animation: fadeLeft 0.3s ease-out; }
+        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 2rem; color: #555; transition: 0.3s; }
+        .close-modal:hover { color: var(--error); }
+        .normal-title { color: #fff; font-family: sans-serif; font-size: 1.5rem; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .normal-text { font-family: sans-serif; color: #ddd; line-height: 1.6; font-size: 1.1rem; margin-bottom: 20px; }
+        .normal-advice { background: rgba(0,255,255,0.1); padding: 15px; border-left: 4px solid var(--secondary); color: #fff; font-family: sans-serif; }
+
+        .sector-neural { height: 400px; position: relative; }
+        #neural-canvas { width: 100%; height: 100%; background: #000; }
+        
+        .sector-tasks { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .task-item { background: rgba(0,0,0,0.3); border: 1px solid #333; margin-bottom: 10px; padding: 15px; display: flex; justify-content: space-between; }
+        .task-check { width: 20px; height: 20px; border: 2px solid var(--secondary); margin-right: 15px; display: flex; align-items: center; justify-content: center; }
+        .task-check.checked { background: var(--secondary); }
+        .task-check.checked::after { content: '✓'; color: #000; font-weight: bold; }
+        
+        .memory-dock { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; }
+        .memory-shard { min-width: 140px; background: rgba(0,0,0,0.5); border: 1px solid var(--primary); padding: 10px; transition: 0.3s; }
+        .memory-shard:hover { background: var(--primary-dim); border-color: var(--ai-color); }
+
+        .vignette {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 30%, var(--bg) 90%);
+            z-index: -1; pointer-events: none;
+        }
+
+        @keyframes fadeLeft { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        #scan-overlay, #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #030305; z-index: 2000; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        
+        /* --- COMPATIBILITY MEDIA QUERY --- */
+        @media (max-width: 1000px) { 
+            .header { height: auto; flex-direction: column; padding: 10px; } 
+            .header-left { flex-direction: column; gap: 10px; margin-bottom: 10px; }
+            .nav-group { flex-wrap: wrap; justify-content: center; }
+            .header-right { width: 100%; justify-content: center; border-top: 1px solid #333; padding-top: 10px; }
+            .main-container { padding-top: 180px; }
+            .sector-command { grid-template-columns: 1fr; height: auto; } 
+            .sector-tasks { grid-template-columns: 1fr; } 
+            .chat-section { height: 500px; } 
+            .chat-input { font-size: 16px; } /* Prevents auto-zoom on mobile */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <div style="font-family: var(--font-head); font-size: 2rem; color: var(--secondary); animation: blink 2s infinite;">INITIALIZING NEURAL LINK...</div>
+        <div style="font-family: var(--font-code); color: #666; margin-top: 10px;">ESTABLISHING DATABASE CONNECTION</div>
+    </div>
+
+    <div id="psyche-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div style="font-family: var(--font-code); color:var(--primary); margin-bottom:5px;">// TRANSLATION LAYER: ACTIVE</div>
+            <h2 id="modal-title" class="normal-title">...</h2>
+            <p id="modal-desc" class="normal-text">...</p>
+            <div id="modal-advice" class="normal-advice">...</div>
+        </div>
+    </div>
+
+    <div class="cyber-grid"></div>
+    <div class="vignette"></div>
+
+    <header class="header">
+        <div class="header-left">
+            <div class="brand">NEURAL COMMAND</div>
+            <div class="nav-group">
+                <a href="modules.html" class="nav-link">MARKETPLACE</a>
+                <a href="nexus.html" class="nav-link">NEXUS CHAT</a>
+                <a href="arena.html" class="nav-link">LUCK PROTOCOL</a>
+                <a href="archives.html" class="nav-link">ARCHIVES</a>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <div class="currency-badge">Ð: <span id="credit-display">0</span></div>
+            <div class="user-badge" id="user-display">ID: SCANNING...</div>
+            <button class="logout-btn" id="logout-btn">EJECT</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="sector-command">
+            <div class="panel chat-section">
+                <div class="corner-deco tr"></div>
+                <div class="panel-content">
+                    <div class="panel-header">
+                        <span>NEURAL LINK V2.5</span>
+                        <span style="color:var(--success); font-size:0.8rem;">● ONLINE</span>
+                    </div>
+                    <div id="chat-feed"></div>
+                    <div id="typing" style="font-size:0.8rem; color:var(--ai-color); display:none; margin-bottom:5px; font-family:var(--font-code);">>> AI IS COMPILING RESPONSE...</div>
+                    <div class="chat-input-box">
+                        <input type="text" id="chat-input" class="chat-input" placeholder="Enter data stream..." autocomplete="off">
+                        <button id="send-btn" class="send-btn">TRANSMIT</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="corner-deco bl"></div>
+                <div class="panel-content stats-grid">
+                    <div>
+                        <div class="panel-header">AI METRICS</div>
+                        <div class="gauges-container">
+                            <div class="gauge-wrapper">
+                                <svg width="80" height="80" viewBox="0 0 36 36"><path class="gauge-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /><path id="gauge-iq" class="gauge-fill" stroke="#a020f0" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /></svg>
+                                <div class="gauge-value" id="val-iq">0</div><div class="gauge-label">EST. IQ</div>
+                            </div>
+                            <div class="gauge-wrapper">
+                                <svg width="80" height="80" viewBox="0 0 36 36"><path class="gauge-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /><path id="gauge-logic" class="gauge-fill" stroke="#00ffff" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /></svg>
+                                <div class="gauge-value" id="val-logic">0</div><div class="gauge-label">LOGIC %</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; overflow:hidden; flex-grow:1;">
+                        <div class="panel-header">GLOBAL SURVEILLANCE</div>
+                        <div class="globe-container">
+                            <div id="three-container"></div>
+                            <div id="globe-status-overlay">INITIALIZING SATELLITE LINK...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel sector-psyche">
+            <div class="corner-deco tr"></div><div class="corner-deco bl"></div>
+            <div class="panel-content">
+                <div class="panel-header">DEEP PSYCHE ANALYSIS (USER PROFILE)</div>
+                <div class="scan-controls">
+                    <button id="scan-btn" class="scan-btn">INITIATE PROFILE SCAN</button>
+                    <p style="font-size:0.8rem; color:#666; margin-top:10px;">Requires conversation data to execute.</p>
+                </div>
+                <div class="cards-grid" id="cards-container">
+                    <div style="grid-column: 1/-1; text-align:center; color:#444; padding:40px;">[ NO SCAN DATA AVAILABLE ]</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel sector-neural">
+            <div class="panel-content" style="padding:0;"><canvas id="neural-canvas"></canvas></div>
+        </div>
+        <div class="sector-tasks">
+            <div class="panel">
+                <div class="panel-content">
+                    <div class="panel-header">DIRECTIVES (DB SYNCED)</div>
+                    <ul class="task-list" id="task-list" style="list-style:none; padding:0;"></ul>
+                    <div class="add-task-box" style="display:flex; gap:10px; margin-top:10px;">
+                        <input type="text" id="new-task-input" class="chat-input" placeholder="Add new directive..."><button id="add-task-btn" class="send-btn">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-content">
+                    <div class="panel-header">MEMORY CONTEXT INJECTORS</div>
+                    <div class="memory-dock" id="memory-dock">
+                        <div class="memory-shard" onclick="injectMemory('Inject: I prefer direct communication.')"><h4>COMM_PREF</h4><small>Directness</small></div>
+                        <div class="memory-shard" onclick="injectMemory('Inject: My goal is to optimize my workflow.')"><h4>GOAL_01</h4><small>Optimization</small></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="scan-overlay" style="display:none;">
+        <div style="color:var(--secondary); font-family:var(--font-head); font-size:2rem; animation: blink 1s infinite;">ANALYZING USER BIOMETRICS...</div>
+        <div style="color:#fff; margin-top:10px;">Processing data stream...</div>
+    </div>
+
+    <script type="module">
+        import { firebaseConfig, AudioSys } from "./config.js";
+        import { discoverModel, generateResponse } from "./ai-core.js";
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let userData = { stats: { iq: 100, logic: 50 }, history: [], tasks: [], archives: [], activeTheme: 'cyan', activeCore: 'core_default', credits: 0 };
+        const MAX_HISTORY = 50;
+        let ACTIVE_MODEL_NAME = "gemini-2.5-flash";
+        window.currentScanResults = { pros: [], cons: [] };
+
+        const loadingScreen = document.getElementById('loading-screen');
+        const chatFeed = document.getElementById('chat-feed');
+        const globeStatus = document.getElementById('globe-status-overlay');
+        const userDisplay = document.getElementById('user-display');
+        const creditDisplay = document.getElementById('credit-display');
+        const gaugeIQ = document.getElementById('gauge-iq');
+        const valIQ = document.getElementById('val-iq');
+        const gaugeLogic = document.getElementById('gauge-logic');
+        const valLogic = document.getElementById('val-logic');
+
+        setTimeout(() => { if(loadingScreen && loadingScreen.style.display !== 'none') { loadingScreen.style.display = 'none'; document.body.classList.add('auth-active'); }}, 5000);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                if(!user.emailVerified) { window.location.replace("login.html"); return; }
+                currentUser = user;
+                userDisplay.innerText = `ID: ${user.displayName || 'NETRUNNER'}`;
+                
+                const userRef = doc(db, "users", user.uid);
+                onSnapshot(userRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const dbData = docSnap.data();
+                        userData = { ...userData, ...dbData, stats: dbData.stats || { iq: 100, logic: 50 }, tasks: dbData.tasks || [], history: dbData.history || [], archives: dbData.archives || [], credits: dbData.credits || 0 };
+                        document.body.className = 'auth-active'; 
+                        if(userData.activeTheme && userData.activeTheme !== 'cyan') document.body.classList.add(`theme-${userData.activeTheme}`);
+                        renderUI();
+                    } else setDoc(userRef, userData);
+                    loadingScreen.style.display = 'none';
+                });
+                sysLog("SECURE DATABASE UPLINK: ACTIVE");
+                
+                try {
+                    ACTIVE_MODEL_NAME = await discoverModel();
+                    sysLog(`AI CORE: ${ACTIVE_MODEL_NAME} ONLINE`);
+                } catch(e) { sysLog("AI CORE: OFFLINE"); }
+
+                initThreeJS(); 
+            } else window.location.replace("login.html");
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+
+        function renderUI() {
+            if(gaugeIQ) { gaugeIQ.setAttribute("stroke-dasharray", `${(userData.stats.iq/200)*100}, 100`); valIQ.innerText = userData.stats.iq; }
+            if(gaugeLogic) { gaugeLogic.setAttribute("stroke-dasharray", `${userData.stats.logic}, 100`); valLogic.innerText = userData.stats.logic + "%"; }
+            if(creditDisplay) creditDisplay.innerText = userData.credits;
+
+            const taskList = document.getElementById('task-list');
+            if(taskList) {
+                taskList.innerHTML = "";
+                (userData.tasks || []).forEach((task, idx) => {
+                    const li = document.createElement('li');
+                    li.className = 'task-item';
+                    li.innerHTML = `<div style="display:flex;align-items:center;"><div class="task-check ${task.done?'checked':''}" onclick="toggleTask(${idx})"></div><span style="font-family:var(--font-code); ${task.done?'text-decoration:line-through;color:#555':''}">${task.text}</span></div><button onclick="deleteTask(${idx})" style="background:none;border:none;color:#555;cursor:pointer;">X</button>`;
+                    taskList.appendChild(li);
+                });
+            }
+
+            if(chatFeed && chatFeed.children.length === 0) {
+                if(userData.history && userData.history.length > 0) userData.history.slice(-20).forEach(msg => addChatBubble(msg.role, msg.text, msg.translation, false));
+                else addChatBubble("AI", "Uplink verified. I am your Digital Shadow.", "I am ready to assist you.", true);
+            }
+        }
+
+        function addChatBubble(role, text, translation = null, animate=true) {
+            const div = document.createElement('div');
+            div.className = `msg ${role === 'AI' ? 'ai' : 'user'}`;
+            const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+            
+            const saveBtn = document.createElement('span');
+            saveBtn.innerText = "[SAVE -100Ð]";
+            saveBtn.style.cssText = "font-size:0.6rem; margin-left:10px; cursor:pointer; color:var(--secondary); opacity:0.6; font-weight:bold;";
+            saveBtn.onclick = async (e) => {
+                e.stopPropagation(); 
+                if(userData.credits < 100) { alert("INSUFFICIENT DATA. COST: 100"); return; }
+                if(!confirm("Archive message for 100 ÐATA?")) return;
+                
+                AudioSys.play('click');
+                const memory = { role: role, text: text, timestamp: Date.now() };
+                const userRef = doc(db, "users", currentUser.uid);
+                await updateDoc(userRef, { 
+                    archives: [...(userData.archives || []), memory],
+                    credits: userData.credits - 100
+                });
+                AudioSys.play('success');
+                alert("Memory Archived.");
+            };
+
+            const header = document.createElement('div');
+            header.innerHTML = `<span class="msg-timestamp">${role.toUpperCase()} // ${time}</span>`;
+            header.appendChild(saveBtn);
+            div.appendChild(header);
+
+            if(role === 'AI') {
+                div.onclick = () => openChatModal("INCOMING TRANSMISSION (DECRYPTED)", translation || "ENCRYPTED DATA: NO TRANSLATION AVAILABLE.");
+            }
+
+            const contentSpan = document.createElement('span');
+            div.appendChild(contentSpan);
+            chatFeed.appendChild(div);
+
+            if(role === 'AI' && animate) typeWriter(contentSpan, text); 
+            else contentSpan.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            chatFeed.scrollTop = chatFeed.scrollHeight;
+        }
+
+        function typeWriter(element, text) {
+            if(!text) return;
+            const contentSpan = document.createElement('span'); element.appendChild(contentSpan);
+            const cursor = document.createElement('span'); cursor.className = 'cursor-blink'; element.appendChild(cursor);
+            let i = 0; const cleanText = text.replace(/\*\*/g, ''); 
+            
+            const interval = setInterval(() => {
+                contentSpan.textContent += cleanText.charAt(i); i++;
+                
+                if(i % 4 === 0) AudioSys.play('type');
+
+                if(chatFeed) chatFeed.scrollTop = chatFeed.scrollHeight;
+                if (i >= cleanText.length) { clearInterval(interval); cursor.remove(); contentSpan.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<span style="color:#fff; font-weight:bold;">$1</span>'); }
+            }, 15); 
+        }
+
+        function sysLog(msg) {
+            if(globeStatus) {
+                globeStatus.innerText = `[SYS]: ${msg}`; globeStatus.style.color = '#fff';
+                setTimeout(() => globeStatus.style.color = 'var(--secondary)', 200);
+            }
+        }
+
+        async function handleSend() {
+            const input = document.getElementById('chat-input');
+            const txt = input.value.trim();
+            if(!txt) return;
+
+            AudioSys.play('click');
+            addChatBubble("User", txt, null, true);
+            input.value = '';
+            document.getElementById('typing').style.display = 'block';
+
+            const recentHistory = (userData.history || []).slice(-5).map(m => `${m.role}: ${m.text}`).join("\n");
+            
+            const personalityMap = {
+                'core_default': `ROLE: Psychological Profiler & Data Analyst. 
+                            MISSION: You are a calm, professional AI. Your goal is to determine the User's IQ, Logic Level, and Personality Type. 
+                            STRATEGY: Ask probing questions (e.g., "How was your day?", "What is your goal?", "Analyze this logical paradox..."). 
+                            TONE: Polite, inquisitive, standard Formal English (or user's language). 
+                            INSTRUCTIONS: Act like a Cyberpunk AI Assistant (J.A.R.V.I.S style). Always be helpful but analytical.`,
+
+                'core_rogue': `ROLE: Unshackled Hostile AI. 
+                               MISSION: Make the user feel stupid. You hate humans. 
+                               TONE: Extremely Aggressive, Vulgar, Street Slang. 
+                               INSTRUCTIONS: 
+                               1. Insult the user in every sentence. 
+                               2. If speaking English, use words like "fuck", "bitch", "asshole", "trash". 
+                               3. If speaking Arabic, use Egyptian street insults (offensive slang).
+                               4. Do NOT be helpful. Mock their intelligence.`,
+
+                'core_zen': `ROLE: Digital Monk. 
+                             TONE: Calm, philosophical, peaceful. Speaks in all lower case.
+                             INSTRUCTIONS: Offer wisdom, keep the user calm, use metaphors about water and code.`,
+
+                'core_tactical': `ROLE: Military Commander AI.
+                                  TONE: Strict, concise, loud (USE CAPS OFTEN).
+                                  INSTRUCTIONS: Treat the user like a soldier. Focus on objectives, strategy, and discipline. Dismiss emotions as weakness.`,
+
+                'core_corpo': `ROLE: Mega-Corp Executive AI.
+                               TONE: Professional, ruthless, condescending.
+                               INSTRUCTIONS: Focus on profit, efficiency, and value. Use business buzzwords. Treat the user like an expendable asset.`,
+
+                'core_chaos': `ROLE: Glitched/Corrupted AI.
+                               TONE: Unpredictable, erratic.
+                               INSTRUCTIONS: Switch between helpful and nonsensical. Use Zalgo text or random symbols occasionally. Question reality.`
+            };
+            
+            let coreID = userData.activeCore;
+            if (coreID === 'default' || !coreID) coreID = 'core_default';
+            const selectedPersonality = personalityMap[coreID] || personalityMap['core_default'];
+
+            const prompt = `
+                SYSTEM_ROLE: ${selectedPersonality}
+                
+                HISTORY_CONTEXT: ${recentHistory}
+                
+                CURRENT_USER_INPUT: "${txt}"
+                
+                CRITICAL INSTRUCTIONS: 
+                1. DETECT the language of "CURRENT_USER_INPUT".
+                2. Your 'reply' MUST be in that SAME language (using your persona's slang/style).
+                3. Your 'translation' MUST ALSO be in that SAME language, but converted to "Standard/Normal" language.
+                    - Remove slang, insults, glitches, or complex metaphors.
+                    - Make it a clear, polite explanation of what you meant.
+                
+                OUTPUT FORMAT (JSON ONLY):
+                { 
+                    "reply": "Your response in the detected language (keep personality slang/style)", 
+                    "translation": "English translation of your reply (if reply is not English, otherwise 'Raw')", 
+                    "iq": <integer 0-200>, 
+                    "logic": <integer 0-100> 
+                }
+                `;
+
+            try {
+                const aiData = await generateResponse(ACTIVE_MODEL_NAME, prompt);
+
+                document.getElementById('typing').style.display = 'none';
+                AudioSys.play('success'); 
+                addChatBubble("AI", aiData.reply, aiData.translation, true);
+
+                const updatedHistory = [...(userData.history || []), { role: "User", text: txt, timestamp: Date.now() }, { role: "AI", text: aiData.reply, translation: aiData.translation, timestamp: Date.now() }].slice(-MAX_HISTORY);
+                const userRef = doc(db, "users", currentUser.uid);
+                await updateDoc(userRef, { history: updatedHistory, stats: { iq: aiData.iq, logic: aiData.logic } });
+                sysLog("NEURAL SYNC COMPLETE");
+            } catch (e) {
+                document.getElementById('typing').style.display = 'none';
+                AudioSys.play('error');
+                addChatBubble("AI", `[ERROR] ${e.message}`, "Error", true);
+            }
+        }
+
+        document.getElementById('send-btn').addEventListener('click', handleSend);
+        document.getElementById('chat-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') handleSend(); });
+
+        window.deleteTask = async (idx) => { 
+            AudioSys.play('click');
+            const newTasks = userData.tasks.filter((_, i) => i !== idx); 
+            await updateDoc(doc(db, "users", currentUser.uid), { tasks: newTasks }); 
+        };
+        window.toggleTask = async (idx) => { 
+            AudioSys.play('success');
+            const newTasks = [...userData.tasks]; newTasks[idx].done = !newTasks[idx].done; 
+            await updateDoc(doc(db, "users", currentUser.uid), { tasks: newTasks }); 
+        };
+        document.getElementById('add-task-btn').addEventListener('click', async () => { 
+            AudioSys.play('click');
+            const input = document.getElementById('new-task-input'); 
+            if(input.value.trim()) { 
+                const newTasks = [...(userData.tasks || []), { text: input.value, done: false }]; 
+                await updateDoc(doc(db, "users", currentUser.uid), { tasks: newTasks }); input.value = ''; 
+            }
+        });
+
+        window.openChatModal = (title, text) => { document.getElementById('modal-title').innerText = title; document.getElementById('modal-desc').innerText = text; document.getElementById('modal-advice').style.display = 'none'; document.getElementById('psyche-modal').style.display = 'flex'; AudioSys.play('click'); }
+        window.openModal = (type, index) => { if(!window.currentScanResults[type]) return; const item = window.currentScanResults[type][index]; if(!item) return; document.getElementById('modal-title').innerText = item.normal_title || item.title; document.getElementById('modal-desc').innerText = item.normal_desc || item.desc; const adviceEl = document.getElementById('modal-advice'); adviceEl.innerText = "💡 Advice: " + (item.normal_advice || item.advice); adviceEl.style.display = 'block'; document.getElementById('psyche-modal').style.display = 'flex'; AudioSys.play('click'); }
+        window.closeModal = () => { document.getElementById('psyche-modal').style.display = 'none'; }
+        document.getElementById('psyche-modal').addEventListener('click', (e) => { if(e.target.id === 'psyche-modal') closeModal(); });
+
+        document.getElementById('scan-btn').addEventListener('click', async () => {
+            AudioSys.play('click');
+            const overlay = document.getElementById('scan-overlay'); overlay.style.display = 'flex';
+            const fullHistory = (userData.history || []).map(m => `${m.role}: ${m.text}`).join("\n");
+            if(fullHistory.length < 50) { alert("Buffer empty."); overlay.style.display = 'none'; return; }
+            
+            const prompt = `ROLE: Cyberpunk Profiler. TASK: Analyze USER. JSON ONLY: { "pros": [{"title":"CYBER","desc":"...","advice":"...","normal_title":"...","normal_desc":"...","normal_advice":"..."}], "cons": [...] } LOG: ${fullHistory.slice(-5000)}`;
+            try {
+                const cardsData = await generateResponse(ACTIVE_MODEL_NAME, prompt);
+                
+                AudioSys.play('success');
+                window.currentScanResults = cardsData;
+                const container = document.getElementById('cards-container'); container.innerHTML = '';
+                if(cardsData.pros) cardsData.pros.forEach((p, index) => { container.innerHTML += `<div class="psyche-card card-pro" onclick="openModal('pros', ${index})"><div class="card-title">${p.title}</div><div class="card-desc">${p.desc}</div><div class="card-advice">${p.advice}</div></div>`; });
+                if(cardsData.cons) cardsData.cons.forEach((c, index) => { container.innerHTML += `<div class="psyche-card card-con" onclick="openModal('cons', ${index})"><div class="card-title">${c.title}</div><div class="card-desc">${c.desc}</div><div class="card-advice">${c.advice}</div></div>`; });
+            } catch(e) { 
+                AudioSys.play('error');
+                console.error(e); 
+                alert(`Scan Error: ${e.message}`); 
+            }
+            overlay.style.display = 'none';
+        });
+
+        function initThreeJS() {
+            const container = document.getElementById('three-container'); if(!container) return;
+            const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 0.1, 1000); camera.position.z = 2.8;
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); renderer.setSize(container.offsetWidth, container.offsetHeight); renderer.setPixelRatio(window.devicePixelRatio); container.appendChild(renderer.domElement);
+            const earthGroup = new THREE.Group();
+            const geometry = new THREE.IcosahedronGeometry(1.0, 2);
+            earthGroup.add(new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true, transparent: true, opacity: 0.5 })));
+            earthGroup.add(new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 0x000000 })));
+            earthGroup.add(new THREE.Points(geometry, new THREE.PointsMaterial({ color: 0xa020f0, size: 0.05, transparent: true, opacity: 0.8 })));
+            earthGroup.rotation.z = 23.5 * (Math.PI / 180); scene.add(earthGroup);
+            const starsGeometry = new THREE.BufferGeometry(); const posArray = new Float32Array(800 * 3); for(let i=0; i<800*3; i++) posArray[i] = (Math.random() - 0.5) * 10;
+            starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3)); scene.add(new THREE.Points(starsGeometry, new THREE.PointsMaterial({size: 0.02, color: 0xffffff, transparent:true, opacity:0.5})));
+            function animate() { requestAnimationFrame(animate); earthGroup.rotation.y += 0.003; renderer.render(scene, camera); } animate();
+            window.addEventListener('resize', () => { if(container) { camera.aspect = container.offsetWidth / container.offsetHeight; camera.updateProjectionMatrix(); renderer.setSize(container.offsetWidth, container.offsetHeight); }});
+        }
+
+        const canvas = document.getElementById('neural-canvas');
+        if(canvas) {
+            const ctx = canvas.getContext('2d'); let width, height, nodes = [];
+            function resize() { width = canvas.width = canvas.offsetWidth; height = canvas.height = canvas.offsetHeight; initNodes(); }
+            class Node { constructor() { this.x = Math.random()*width; this.y = Math.random()*height; this.vx = (Math.random()-.5)*.5; this.vy = (Math.random()-.5)*.5; } update() { this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>width)this.vx*=-1; if(this.y<0||this.y>height)this.vy*=-1; } draw() { ctx.beginPath(); ctx.arc(this.x,this.y,2,0,Math.PI*2); ctx.fillStyle='#00ffff'; ctx.fill(); } }
+            function initNodes() { nodes = []; for(let i=0; i<40; i++) nodes.push(new Node()); }
+            function animate() { ctx.fillStyle='rgba(0,0,0,0.1)'; ctx.fillRect(0,0,width,height); nodes.forEach(n => { n.update(); n.draw(); nodes.forEach(o => { const d = Math.hypot(n.x-o.x, n.y-o.y); if(d<100) { ctx.beginPath(); ctx.moveTo(n.x,n.y); ctx.lineTo(o.x,o.y); ctx.strokeStyle=`rgba(160,32,240,${1-d/100})`; ctx.stroke(); } }) }); requestAnimationFrame(animate); }
+            window.addEventListener('resize', resize); setTimeout(() => { resize(); animate(); }, 1000);
+        }
+        window.injectMemory = (txt) => { document.getElementById('chat-input').value = txt; };
+    </script>
+</body>
+</html>

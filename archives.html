@@ -1,0 +1,295 @@
+<!-- most of the coordinates and numbers of the HTML and CSS Generated using an SVG Circle Generator online and other websites -->
+<!-- check Brave bookmarks for them -->
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ARCHIVES // DIGITAL DOPPELGÄNGER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #a020f0;  
+            --secondary: #00ffff; 
+            --bg: #030305;
+            --panel-bg: rgba(8, 8, 10, 0.95);
+            --font-head: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
+            --font-code: 'Share Tech Mono', monospace;
+            --error: #ff0055;
+        }
+
+        body.theme-red { --primary: #ff0055; --secondary: #ff4400; }
+        body.theme-green { --primary: #005500; --secondary: #39ff14; }
+        body.theme-gold { --primary: #b8860b; --secondary: #ffd700; }
+        body.theme-purple { --primary: #aa00ff; --secondary: #ff00ff; }
+        body.theme-noir { --primary: #888; --secondary: #fff; --bg: #000; --panel-bg: rgba(20,20,20,0.95); }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; padding: 0; background-color: var(--bg); color: var(--secondary);
+            font-family: var(--font-body); min-height: 100vh;
+            display: flex; flex-direction: column; opacity: 0; transition: 0.8s;
+            overflow-x: hidden;
+        }
+        body.loaded { opacity: 1; }
+
+        /* CRT Effect Overlay */
+        body::after { 
+            content: " "; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03)); 
+            background-size: 100% 3px, 3px 100%; pointer-events: none; z-index: 9999; 
+        }
+
+        .header {
+            padding: 15px 25px; border-bottom: 1px solid var(--primary);
+            background: rgba(0,0,0,0.8); display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);
+        }
+        .brand { font-family: var(--font-head); font-size: 1.2rem; letter-spacing: 2px; color:#fff; }
+        .back-btn { 
+            color: var(--secondary); text-decoration: none; border: 1px solid var(--secondary); 
+            padding: 5px 12px; font-family: var(--font-code); transition: 0.3s; font-size: 0.8rem;
+        }
+        .back-btn:hover { background: var(--secondary); color: #000; }
+
+        .archive-grid {
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px; padding: 25px; flex-grow: 1;
+        }
+
+        .shard {
+            background: rgba(255,255,255,0.03); border: 1px solid #333;
+            padding: 20px; position: relative; overflow: hidden;
+            transition: 0.3s; cursor: pointer; display: flex; flex-direction: column;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+        }
+        .shard:hover { 
+            border-color: var(--secondary); 
+            background: rgba(255,255,255,0.05); 
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0,255,255,0.1);
+        }
+        
+        .shard::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .shard-meta {
+            font-family: var(--font-code); font-size: 0.65rem; color: #666;
+            margin-bottom: 10px; display: flex; justify-content: space-between;
+        }
+        .shard-content {
+            font-size: 0.95rem; color: #ddd; line-height: 1.5; flex-grow: 1;
+            max-height: 100px; overflow: hidden; position: relative;
+        }
+        /* Fade effect for preview */
+        .shard-content::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 40px;
+            background: linear-gradient(to top, rgba(15,15,15,1), transparent);
+        }
+
+        .shard-role {
+            position: absolute; bottom: 10px; right: 15px;
+            font-family: var(--font-head); font-size: 1.8rem; opacity: 0.05;
+            pointer-events: none;
+        }
+
+        .delete-btn {
+            background: transparent; border: 1px solid var(--error); color: var(--error);
+            padding: 4px 8px; font-family: var(--font-code); cursor: pointer;
+            font-size: 0.65rem; margin-top: 15px; align-self: flex-start;
+            transition: 0.3s; z-index: 5; position: relative;
+        }
+        .delete-btn:hover { background: var(--error); color: #fff; }
+
+        /* --- POPUP (MODAL) STYLES --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 10000;
+            padding: 20px;
+        }
+        .modal-window {
+            background: var(--panel-bg); border: 1px solid var(--secondary);
+            width: 100%; max-width: 600px; max-height: 80vh;
+            padding: 30px; position: relative; display: flex; flex-direction: column;
+            box-shadow: 0 0 50px rgba(0,255,255,0.2);
+            clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+        }
+        .modal-close {
+            position: absolute; top: 10px; right: 20px; font-size: 2rem;
+            color: var(--secondary); cursor: pointer; font-family: var(--font-code);
+        }
+        .modal-header {
+            font-family: var(--font-head); color: #fff; border-bottom: 1px solid #333;
+            padding-bottom: 10px; margin-bottom: 20px; font-size: 1rem;
+        }
+        .modal-body {
+            font-size: 1.1rem; color: #eee; line-height: 1.6; overflow-y: auto;
+            font-family: var(--font-body); padding-right: 10px;
+        }
+        .modal-body::-webkit-scrollbar { width: 4px; }
+        .modal-body::-webkit-scrollbar-thumb { background: var(--primary); }
+
+        .empty-state {
+            grid-column: 1 / -1; text-align: center; color: #444; margin-top: 50px;
+            font-family: var(--font-code); font-size: 0.9rem; padding: 20px;
+        }
+
+        /* --- MOBILE TWEAKS --- */
+        @media (max-width: 600px) {
+            .header { padding: 10px 15px; }
+            .brand { font-size: 1rem; }
+            .back-btn { padding: 4px 8px; font-size: 0.7rem; }
+            .archive-grid { padding: 15px; gap: 15px; }
+            .shard { padding: 15px; }
+            .modal-window { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="brand">CORE ARCHIVES</div>
+        <a href="project.html" class="back-btn">&lt;&lt; RETURN</a>
+    </div>
+
+    <div class="archive-grid" id="archive-grid">
+        <div class="empty-state">ESTABLISHING CONNECTION TO MEMORY BANKS...</div>
+    </div>
+
+    <!-- Popup Structure -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closePopup()">
+        <div class="modal-window" onclick="event.stopPropagation()">
+            <span class="modal-close" onclick="closePopup()">&times;</span>
+            <div class="modal-header" id="modal-header">MEMORY_DATA_DECRYPTED</div>
+            <div class="modal-body" id="modal-body">...</div>
+            <div style="margin-top:20px; font-family:var(--font-code); font-size:0.7rem; color:#444;">
+                // SECURE VIEWING MODE ACTIVE
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { firebaseConfig, AudioSys } from "./config.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        let currentUser = null;
+        let userData = {};
+
+        // Mobile-friendly audio init
+        document.body.addEventListener('click', () => AudioSys.init(), { once: true });
+        document.body.addEventListener('touchstart', () => AudioSys.init(), { once: true });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userRef = doc(db, "users", user.uid);
+                
+                onSnapshot(userRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        userData = docSnap.data();
+                        renderArchives(userData.archives || []);
+                        
+                        if(userData.activeTheme && userData.activeTheme !== 'cyan') {
+                            document.body.className = 'loaded';
+                            document.body.classList.add(`theme-${userData.activeTheme}`);
+                        } else {
+                            document.body.className = 'loaded';
+                        }
+                    }
+                });
+            } else {
+                window.location.replace("login.html");
+            }
+        });
+
+        function renderArchives(archives) {
+            const grid = document.getElementById('archive-grid');
+            grid.innerHTML = '';
+
+            if (archives.length === 0) {
+                grid.innerHTML = '<div class="empty-state">NO MEMORIES ARCHIVED.<br>USE THE [SAVE] BUTTON IN THE COMMAND CENTER TO STORE DATA.</div>';
+                return;
+            }
+
+            // Creating a reversed copy to show newest first
+            [...archives].reverse().forEach((item, index) => {
+                const originalIndex = archives.length - 1 - index; 
+                const date = new Date(item.timestamp || Date.now()).toLocaleString();
+                const shardID = Math.random().toString(36).substr(2, 6).toUpperCase();
+                
+                const shard = document.createElement('div');
+                shard.className = 'shard';
+                // Attach popup event to the whole shard
+                shard.onclick = () => openPopup(item.text, item.role, date);
+
+                shard.innerHTML = `
+                    <div class="shard-meta">
+                        <span>ID: ${shardID}</span>
+                        <span>${date}</span>
+                    </div>
+                    <div class="shard-content">
+                        ${item.text}
+                    </div>
+                    <div class="shard-role">${item.role}</div>
+                    <button class="delete-btn" onclick="deleteMemory(event, ${originalIndex})">PURGE DATA</button>
+                `;
+                grid.appendChild(shard);
+            });
+        }
+
+        // --- POPUP LOGIC ---
+        window.openPopup = (text, role, date) => {
+            AudioSys.play('click');
+            document.getElementById('modal-header').innerText = `DATA_LOG // ${role} // ${date}`;
+            document.getElementById('modal-body').innerText = text;
+            document.getElementById('modal-overlay').style.display = 'flex';
+        };
+
+        window.closePopup = () => {
+            document.getElementById('modal-overlay').style.display = 'none';
+        };
+
+        // Esc key to close popup
+        window.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape') closePopup();
+        });
+
+        // --- DELETE LOGIC ---
+        window.deleteMemory = async (event, index) => {
+            // Stop the shard click (popup) from triggering when we click delete
+            event.stopPropagation();
+            
+            AudioSys.play('click');
+            if(!confirm("PERMANENTLY PURGE THIS MEMORY SHARD?")) return;
+            
+            const newArchives = [...(userData.archives || [])];
+            newArchives.splice(index, 1);
+            
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    archives: newArchives
+                });
+                AudioSys.play('error'); // Play the "delete/error" sound
+            } catch(e) {
+                console.error("Archive Purge Failed:", e);
+            }
+        };
+
+    </script>
+</body>
+</html>

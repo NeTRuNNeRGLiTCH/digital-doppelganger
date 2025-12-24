@@ -1,0 +1,321 @@
+<!-- most of the coordinates and numbers of the HTML and CSS Generated using an SVG Circle Generator online and other websites -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ARENA // QUANTUM SLOTS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --p: #ff0055; --s: #00ffff; --g: #00ff00; --bg: #050505; --panel: rgba(10,10,10,0.95); }
+        
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        html, body { height: 100%; margin: 0; padding: 0; }
+
+        body { 
+            background: var(--bg); 
+            color: #fff; 
+            font-family: 'Rajdhani', sans-serif; 
+            min-height: 100vh; 
+            min-height: 100dvh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow-x: hidden; 
+        }
+        
+        /* CRT Overlay Effect */
+        body::after { 
+            content: " "; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); 
+            background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 9999; 
+        }
+
+        /* --- HEADER --- */
+        .header { 
+            padding: 15px 20px; 
+            border-bottom: 1px solid var(--s); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            background: #000; 
+            z-index: 10; 
+            flex-shrink: 0;
+        }
+        .brand { font-family: 'Orbitron'; letter-spacing: 2px; color: var(--s); font-size: 1.1rem; }
+        .header-meta { font-size: 0.9rem; color: #aaa; }
+        
+        /* --- MAIN AREA --- */
+        .main-container { 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 25px; 
+            background: radial-gradient(circle, #1a1a1a 0%, #000 80%); 
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .slot-machine { 
+            display: flex; 
+            gap: 12px; 
+            padding: 15px; 
+            background: #000; 
+            border: 4px solid #333; 
+            border-radius: 10px; 
+            box-shadow: 0 0 50px rgba(0,255,255,0.05); 
+            position: relative; 
+        }
+        .slot-machine::before { 
+            content: 'QUANTUM_CORE'; 
+            position: absolute; 
+            top: -15px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: #000; 
+            padding: 0 10px; 
+            color: #555; 
+            font-family: 'Orbitron'; 
+            font-size: 0.7rem; 
+        }
+        
+        .reel { 
+            width: 90px; 
+            height: 130px; 
+            background: #111; 
+            border: 2px solid #333; 
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-family: 'Orbitron'; 
+            font-size: 3.5rem; 
+            font-weight: 900; 
+            color: #fff; 
+            text-shadow: 0 0 10px rgba(255,255,255,0.3); 
+            position: relative; 
+        }
+        .reel::after { 
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent 40%, transparent 60%, rgba(0,0,0,0.8)); 
+            pointer-events: none; 
+        }
+        
+        .blur { filter: blur(4px); color: rgba(255,255,255,0.5); transform: scaleY(1.2); }
+        .win-glow { animation: pulse 0.5s infinite alternate; border-color: var(--g); box-shadow: 0 0 30px var(--g); }
+        
+        @keyframes pulse { from { box-shadow: 0 0 10px var(--g); } to { box-shadow: 0 0 30px var(--g); } }
+        
+        /* --- CONTROLS --- */
+        .controls { display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%; max-width: 400px; }
+        .bet-box { display: flex; gap: 10px; width: 100%; }
+        
+        input { 
+            background: #000; 
+            border: 1px solid var(--s); 
+            color: var(--s); 
+            padding: 12px; 
+            font-family: 'Orbitron'; 
+            font-size: 1.1rem; 
+            flex-grow: 1; 
+            text-align: center; 
+            outline: none;
+            width: 50%;
+        }
+        
+        .spin-btn { 
+            background: var(--p); 
+            border: none; 
+            color: #fff; 
+            padding: 15px; 
+            font-family: 'Orbitron'; 
+            font-size: 1.2rem; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px); 
+            width: 100%; 
+        }
+        .spin-btn:hover { background: #fff; color: #000; box-shadow: 0 0 20px var(--p); }
+        .spin-btn:disabled { background: #333; color: #555; cursor: not-allowed; box-shadow: none; }
+        
+        .status-msg { height: 30px; font-family: 'Orbitron'; font-size: 1.1rem; text-shadow: 0 0 10px currentColor; text-align: center; }
+        .payout-table { font-size: 0.75rem; color: #666; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 10px; text-align: center; }
+        
+        /* --- PHONE COMPATIBILITY --- */
+        @media (max-width: 600px) {
+            .header { padding: 10px 15px; }
+            .brand { font-size: 0.9rem; }
+            .header-meta { font-size: 0.75rem; }
+            
+            .reel { width: 75px; height: 110px; font-size: 2.8rem; }
+            .slot-machine { gap: 8px; padding: 10px; }
+            
+            .status-msg { font-size: 0.9rem; }
+            .spin-btn { font-size: 1.1rem; padding: 12px; }
+            input { font-size: 1rem; padding: 10px; }
+            .payout-table { flex-direction: column; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <span class="brand">LUCK PROTOCOL</span>
+        <span class="header-meta">CREDITS: <span id="balance" style="color:#fff">...</span> | <a href="project.html" style="color:#666; text-decoration:none;">EXIT</a></span>
+    </div>
+
+    <div class="main-container">
+        <div class="status-msg" id="msg" style="color:#fff">PLACE YOUR BET</div>
+
+        <div class="slot-machine" id="machine">
+            <div class="reel" id="reel1">7</div>
+            <div class="reel" id="reel2">7</div>
+            <div class="reel" id="reel3">7</div>
+        </div>
+
+        <div class="controls">
+            <div class="bet-box">
+                <input type="number" id="bet-input" placeholder="BET" min="10" value="100">
+                <button class="spin-btn" style="width:auto; background:#333; font-size:0.8rem; padding: 0 20px;" onclick="maxBet()">MAX</button>
+            </div>
+            <button id="spin-btn" class="spin-btn" onclick="spin()">SPIN</button>
+        </div>
+
+        <div class="payout-table">
+            <span style="color:var(--p)">3x MATCH = JACKPOT (10x-50x)</span>
+            <span style="color:var(--s)">2x MATCH = PROFIT (2x)</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { firebaseConfig, AudioSys } from "./config.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        const db = getFirestore(initializeApp(firebaseConfig));
+        let currentUser = null;
+        let credits = 0;
+        let spinning = false;
+
+        const SYMBOLS = [
+            { char: '7', color: '#ffd700', val: 50 }, 
+            { char: 'Ω', color: '#ff0055', val: 40 }, 
+            { char: 'π', color: '#00ffff', val: 30 }, 
+            { char: 'Ø', color: '#00ff00', val: 20 }, 
+            { char: 'µ', color: '#888888', val: 10 }  
+        ];
+
+        onAuthStateChanged(getAuth(), async (u) => {
+            if(u) {
+                currentUser = u;
+                const s = await getDoc(doc(db,"users",u.uid));
+                credits = s.data().credits || 0;
+                updateBalance();
+            } else window.location="login.html";
+        });
+
+        function updateBalance() { document.getElementById('balance').innerText = credits + " Ð"; }
+        
+        window.maxBet = () => {
+            AudioSys.play('click');
+            document.getElementById('bet-input').value = credits;
+        };
+
+        window.spin = async () => {
+            if(spinning) return;
+            const betInput = document.getElementById('bet-input');
+            const bet = parseInt(betInput.value);
+            const msg = document.getElementById('msg');
+            
+            if(!bet || bet <= 0) { msg.innerText = "INVALID BET"; return; }
+            if(bet > credits) { msg.innerText = "INSUFFICIENT FUNDS"; msg.style.color="var(--p)"; return; }
+            
+            spinning = true;
+            AudioSys.play('click');
+            document.getElementById('spin-btn').disabled = true;
+            document.getElementById('machine').classList.remove('win-glow');
+            msg.innerText = "DECRYPTING..."; msg.style.color="#fff";
+            
+            await updateDoc(doc(db,"users",currentUser.uid), { credits: increment(-bet) });
+            credits -= bet;
+            updateBalance();
+
+            const reels = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];
+            const intervals = [];
+            const results = [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()];
+
+            reels.forEach((r, i) => {
+                r.classList.add('blur');
+                intervals[i] = setInterval(() => {
+                    const rand = SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)];
+                    r.innerText = rand.char;
+                    r.style.color = rand.color;
+                    AudioSys.play('type'); 
+                }, 50);
+            });
+
+            for(let i=0; i<3; i++) {
+                await new Promise(r => setTimeout(r, 500 + (i*500))); 
+                clearInterval(intervals[i]);
+                reels[i].classList.remove('blur');
+                reels[i].innerText = results[i].char;
+                reels[i].style.color = results[i].color;
+                AudioSys.play('click'); 
+            }
+
+            checkWin(results, bet);
+            spinning = false;
+            document.getElementById('spin-btn').disabled = false;
+        };
+
+        function getRandomSymbol() {
+            const r = Math.random();
+            if(r < 0.05) return SYMBOLS[0]; 
+            if(r < 0.15) return SYMBOLS[1]; 
+            if(r < 0.35) return SYMBOLS[2]; 
+            if(r < 0.60) return SYMBOLS[3]; 
+            return SYMBOLS[4];
+        }
+
+        async function checkWin(res, bet) {
+            const msg = document.getElementById('msg');
+            let multiplier = 0;
+            let winAmount = 0;
+            let type = "LOSS";
+
+            if(res[0].char === res[1].char && res[1].char === res[2].char) {
+                multiplier = res[0].val; 
+                type = "JACKPOT";
+            } 
+            else if (res[0].char === res[1].char || res[1].char === res[2].char || res[0].char === res[2].char) {
+                multiplier = 2; 
+                type = "MATCH";
+            }
+
+            if(multiplier > 0) {
+                winAmount = Math.floor(bet * multiplier);
+                msg.innerText = `${type}! WON ${winAmount} Ð`;
+                msg.style.color = "var(--g)";
+                document.getElementById('machine').classList.add('win-glow');
+                AudioSys.play('success');
+                
+                await updateDoc(doc(db,"users",currentUser.uid), { credits: increment(winAmount) });
+                credits += winAmount;
+                updateBalance();
+            } else {
+                msg.innerText = "DATA CORRUPTED (LOST)";
+                msg.style.color = "var(--p)";
+                AudioSys.play('error');
+            }
+        }
+
+        // Initialize audio on first touch/click for mobile browsers
+        document.body.addEventListener('click', () => AudioSys.init(), { once: true });
+        document.body.addEventListener('touchstart', () => AudioSys.init(), { once: true });
+    </script>
+</body>
+</html>

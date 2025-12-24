@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MODULES // DIGITAL DOPPELGÄNGER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --primary: #a020f0; 
+            --secondary: #00ffff; 
+            --bg: #030305; 
+            --panel-bg: rgba(8, 8, 10, 0.95); 
+            --success: #00ffaa; 
+            --error: #ff0055; 
+            --font-head: 'Orbitron', sans-serif; 
+            --font-body: 'Rajdhani', sans-serif; 
+            --font-code: 'Share Tech Mono', monospace; 
+        }
+        body.theme-red { --primary: #ff0055; --secondary: #ff4400; }
+        body.theme-green { --primary: #005500; --secondary: #39ff14; }
+        body.theme-gold { --primary: #b8860b; --secondary: #ffd700; }
+        body.theme-purple { --primary: #aa00ff; --secondary: #ff00ff; }
+        body.theme-noir { --primary: #444; --secondary: #fff; --bg: #000; --panel-bg: rgba(20,20,20,0.95); }
+        
+        * { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--primary) #111; cursor: crosshair; }
+        a, button, .shop-item { cursor: pointer; }
+        
+        body { 
+            margin: 0; padding: 0; background-color: var(--bg); color: var(--secondary); 
+            font-family: var(--font-body); height: 100vh; height: 100dvh; overflow: hidden; 
+            display: flex; flex-direction: column; opacity: 0; transition: opacity 0.8s ease; 
+        }
+        body.loaded { opacity: 1; }
+        
+        body::after { content: " "; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 9999; }
+
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px 30px; border-bottom: 1px solid var(--primary); 
+            background: rgba(0,0,0,0.8); z-index: 10; height: 70px; flex-shrink: 0; 
+        }
+        .brand { font-family: var(--font-head); font-size: 1.5rem; letter-spacing: 2px; color:#fff; }
+        .currency-box { font-family: var(--font-code); font-size: 1.2rem; border: 1px solid var(--secondary); padding: 5px 15px; background: rgba(0,255,255,0.05); box-shadow: 0 0 10px rgba(160,32,240,0.1); }
+        
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; flex-grow: 1; overflow: hidden; gap: 2px; }
+        
+        .panel { 
+            background: var(--panel-bg); border-right: 1px solid rgba(255,255,255,0.1); 
+            padding: 20px; display: flex; flex-direction: column; position: relative; 
+            height: 100%; overflow: hidden; 
+        }
+        
+        h2 { font-family: var(--font-head); color: #fff; margin-top: 0; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-bottom: 15px; font-size: 1.1rem; flex-shrink: 0; }
+        
+        .terminal-container { flex-grow: 1; position: relative; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 15px; border: 1px solid #333; background: #000; }
+        .terminal-window { flex-grow: 1; overflow-y: auto; padding: 10px; font-family: var(--font-code); font-size: 0.8rem; color: #ccc; scroll-behavior: smooth; background-image: linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px); background-size: 100% 20px; }
+        .terminal-window::-webkit-scrollbar { width: 5px; } .terminal-window::-webkit-scrollbar-thumb { background: var(--secondary); }
+        .log-line { margin-bottom: 4px; border-bottom: 1px solid #111; padding-bottom: 2px; }
+        .log-success { color: var(--success); } .log-sys { color: #666; }
+        
+        .mine-btn { padding: 15px; background: rgba(0,0,0,0.5); color: var(--secondary); border: 2px solid var(--secondary); font-family: var(--font-head); font-size: 1.1rem; transition: 0.2s; text-transform: uppercase; letter-spacing: 2px; clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px); width: 100%; }
+        .mine-btn:hover { background: var(--secondary); color: #000; box-shadow: 0 0 20px var(--secondary); }
+        .mine-btn:active { transform: scale(0.98); }
+        
+        .preview-container { flex-grow: 1; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(160,32,240,0.1) 0%, rgba(0,0,0,0.9) 80%); }
+        #three-preview { width: 100%; height: 100%; }
+        
+        .shop-list { overflow-y: auto; flex-grow: 1; padding-right: 5px; }
+        .shop-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid #333; padding: 12px; margin-bottom: 10px; transition: 0.2s; }
+        .shop-item:hover { border-color: var(--secondary); background: rgba(255,255,255,0.08); }
+        .item-info h3 { margin: 0 0 2px 0; font-family: var(--font-head); font-size: 0.9rem; color: #fff; }
+        .item-info p { margin: 0; font-size: 0.75rem; color: #888; font-family: var(--font-code); }
+        .btn-group { display: flex; gap: 5px; }
+        .buy-btn { background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px; font-family: var(--font-code); transition: 0.3s; min-width: 60px; text-align: center; font-size: 0.8rem; }
+        .shop-item:hover .buy-btn { border-color: var(--secondary); }
+        .buy-btn.owned { border-color: var(--success); color: var(--success); cursor: default; }
+        .buy-btn.active { background: var(--success); color: #000; border-color: var(--success); font-weight: bold; }
+        
+        .back-link { display: block; margin-top: 15px; text-align: center; color: #666; text-decoration: none; font-family: var(--font-code); transition: 0.3s; border: 1px solid #333; padding: 10px; font-size: 0.8rem; }
+        .back-link:hover { color: var(--secondary); border-color: var(--secondary); background: rgba(0,255,255,0.1); }
+        .section-divider { margin: 15px 0 10px; border-bottom: 1px solid #333; color: #666; font-size: 0.8rem; font-family: var(--font-head); }
+        
+        /* --- ADDED FOR MOBILE COMPATIBILITY ONLY --- */
+        @media (max-width: 1000px) {
+            .header { padding: 10px 15px; height: auto; flex-direction: column; gap: 10px; }
+            .brand { font-size: 1.2rem; }
+            .main-grid { display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+            .panel { height: auto; overflow: visible; border-right: none; border-bottom: 1px solid #222; }
+            .terminal-container { height: 200px; }
+            .preview-container { height: 300px; }
+            .shop-list { height: auto; overflow: visible; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="brand">NEURAL MARKET</div>
+        <div class="currency-box">Ð: <span id="currency-display">...</span></div>
+    </div>
+    
+    <div class="main-grid">
+        <div class="panel">
+            <h2>DATA MINING</h2>
+            <div class="terminal-container">
+                <div class="terminal-window" id="terminal">
+                    <div class="log-line log-sys">[SYS] Mining Interface Initialized...</div>
+                </div>
+            </div>
+            <button class="mine-btn" id="mine-btn">EXECUTE SCRIPT (5Ð)</button>
+            <a href="project.html" class="back-link">&lt;&lt; RETURN TO COMMAND CENTER</a>
+        </div>
+        
+        <div class="panel" style="padding:0; border-left:none; border-right:none;">
+            <div class="preview-container"><div id="three-preview"></div></div>
+            <div style="position:absolute; bottom:10px; width:100%; text-align:center; font-family:var(--font-code); color:var(--secondary); text-shadow:0 0 5px var(--secondary); font-size:0.7rem;">// MODULE PREVIEW</div>
+        </div>
+        
+        <div class="panel">
+            <h2>UPGRADES</h2>
+            <div class="shop-list" id="shop-list">loading inventory...</div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { firebaseConfig, AudioSys } from "./config.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        const BACKEND_URL = "/api";
+        
+        let currentUser = null, userData = { credits: 0, inventory: [], archives: [], activeTheme: 'cyan', activeCore: 'default' };
+
+        const SHOP_ITEMS = [
+            { id: 'theme_cyan', name: 'FACTORY RESET', type: 'Visual', cost: 0, desc: 'Default Cyan Interface', color: 0x00ffff, isDefault: true },
+            { id: 'theme_red', name: 'CRIMSON PROTOCOL', type: 'Visual', cost: 500, desc: 'Aggressive Red UI Theme', color: 0xff0055 },
+            { id: 'theme_green', name: 'MATRIX UPLINK', type: 'Visual', cost: 750, desc: 'Classic Hacker Green UI', color: 0x39ff14 },
+            { id: 'theme_gold', name: 'CORPO ELITE', type: 'Visual', cost: 1500, desc: 'Luxurious Gold UI Theme', color: 0xffd700 },
+            { id: 'theme_purple', name: 'SYNTHWAVE', type: 'Visual', cost: 2000, desc: 'Neon Purple & Pink', color: 0xff00ff },
+            { id: 'theme_noir', name: 'NOIR DETECTIVE', type: 'Visual', cost: 2500, desc: 'Monochrome', color: 0xffffff },
+            
+            { id: 'core_default', name: 'STANDARD ISSUE', type: 'AI Core', cost: 0, desc: 'J.A.R.V.I.S. Style', color: 0x00ffff, isDefault: true },
+            { id: 'core_tactical', name: 'WAR ROOM', type: 'AI Core', cost: 1000, desc: 'Military Strategy', color: 0x556b2f },
+            { id: 'core_zen', name: 'ZEN GARDEN', type: 'AI Core', cost: 2000, desc: 'Peaceful Monk', color: 0x88ccff },
+            { id: 'core_rogue', name: 'ROGUE PROTOCOL', type: 'AI Core', cost: 5000, desc: 'Sharp-tongue / Rude', color: 0xff0000 },
+            { id: 'core_corpo', name: 'CORPO SUIT', type: 'AI Core', cost: 4000, desc: 'Ruthless Efficiency', color: 0xffd700 },
+            { id: 'core_chaos', name: 'ANARCHY.EXE', type: 'AI Core', cost: 3000, desc: 'Unpredictable', color: 0xff5500 }
+        ];
+
+        const terminal = document.getElementById('terminal');
+        const currencyDisplay = document.getElementById('currency-display');
+        const shopList = document.getElementById('shop-list');
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userRef = doc(db, "users", user.uid);
+                
+                onSnapshot(userRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        userData = { ...userData, ...data };
+                        updateUI(); 
+                        applyTheme(userData.activeTheme);
+                    }
+                });
+                
+                document.body.classList.add('loaded'); 
+                initThreeJS();
+            } else {
+                window.location.replace("login.html");
+            }
+        });
+
+        document.getElementById('mine-btn').addEventListener('click', async () => {
+            if(!currentUser) return;
+            AudioSys.play('click');
+            const time = new Date().toLocaleTimeString([], {hour12:false});
+            try {
+                const token = await auth.currentUser.getIdToken();
+                const res = await fetch(`${BACKEND_URL}/mine`, {
+                    method: 'POST',
+                    headers: { 'Authorization': token }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const line = document.createElement('div');
+                    line.className = "log-line";
+                    line.innerHTML = `<span class="log-sys">[${time}]</span> <span class="log-success">BLOCK MINED (+5 Ð)</span>`;
+                    terminal.appendChild(line);
+                    AudioSys.play('success');
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (e) {
+                const line = document.createElement('div');
+                line.className = "log-line";
+                line.innerHTML = `<span style="color:var(--error)">[ERR] CONNECTION FAILED</span>`;
+                terminal.appendChild(line);
+                AudioSys.play('error');
+            }
+            terminal.scrollTop = terminal.scrollHeight;
+        });
+
+        function updateUI() {
+            currencyDisplay.innerText = userData.credits; 
+            shopList.innerHTML = '';
+            
+            let currentCore = userData.activeCore;
+            if (!currentCore || currentCore === 'default') currentCore = 'core_default';
+
+            shopList.innerHTML += `<div class="section-divider">SYSTEM UPGRADES</div>`;
+            SHOP_ITEMS.forEach(item => {
+                const isOwned = (userData.inventory || []).includes(item.id) || item.isDefault;
+                let isActive = false;
+                
+                if (item.type === 'Visual') isActive = (item.id === `theme_${userData.activeTheme}`);
+                if (item.type === 'AI Core') isActive = (item.id === currentCore);
+                
+                let btnText = isOwned ? (isActive ? "ACTIVE" : "EQUIP") : `BUY ${item.cost}`;
+                let btnClass = isOwned ? (isActive ? "buy-btn active" : "buy-btn owned") : "buy-btn";
+
+                const div = document.createElement('div'); div.className = 'shop-item';
+                div.innerHTML = `
+                    <div class="item-info"><h3>${item.name}</h3><p>[${item.type}] ${item.desc}</p></div>
+                    <div class="btn-group">
+                        <button class="${btnClass}" onclick="handleItemClick('${item.id}', ${item.cost}, ${isOwned}, '${item.type}')">${btnText}</button>
+                    </div>
+                `;
+                
+                div.addEventListener('mouseenter', () => updateCoreColor(item.color)); 
+                div.addEventListener('mouseleave', () => updateCoreColor(0x00ffff));
+                shopList.appendChild(div);
+            });
+
+            shopList.innerHTML += `<div class="section-divider">DATA BROKER</div>`;
+            const archives = userData.archives || [];
+            
+            if(archives.length === 0) {
+                shopList.innerHTML += `<div style="padding:10px; color:#666; font-size:0.8rem; font-family:var(--font-code);">[EMPTY]</div>`;
+            } else {
+                archives.forEach((mem, idx) => {
+                    const div = document.createElement('div'); div.className = 'shop-item';
+                    div.innerHTML = `
+                        <div class="item-info"><h3>MEMORY SHARD</h3><p>"${mem.text.substring(0, 20)}..."</p></div>
+                        <button class="buy-btn" onclick="sellMemory(${idx})">SELL 50Ð</button>
+                    `;
+                    shopList.appendChild(div);
+                });
+            }
+        }
+
+        window.handleItemClick = async (itemId, cost, isOwned, type) => {
+            AudioSys.play('click');
+            const userRef = doc(db, "users", currentUser.uid);
+            
+            if (!isOwned) {
+                if (userData.credits >= cost) { 
+                    await updateDoc(userRef, { credits: userData.credits - cost, inventory: [...userData.inventory, itemId] }); 
+                } else { 
+                    AudioSys.play('error');
+                }
+            } else {
+                if (type === 'Visual') { 
+                    const themeName = itemId.replace('theme_', ''); 
+                    await updateDoc(userRef, { activeTheme: themeName }); 
+                } 
+                else if (type === 'AI Core') { 
+                    await updateDoc(userRef, { activeCore: itemId }); 
+                }
+            }
+        };
+
+        window.sellMemory = async (idx) => {
+            AudioSys.play('click');
+            if(!confirm("Sell memory for 50 Ð?")) return;
+            const newArchives = [...userData.archives];
+            newArchives.splice(idx, 1);
+            await updateDoc(doc(db, "users", currentUser.uid), {
+                archives: newArchives,
+                credits: userData.credits + 50
+            });
+            AudioSys.play('success');
+        };
+
+        function applyTheme(theme) { document.body.className = 'loaded'; if(theme && theme !== 'cyan') document.body.classList.add(`theme-${theme}`); }
+
+        let coreMesh, pointLight;
+        function initThreeJS() {
+            const container = document.getElementById('three-preview'); 
+            const scene = new THREE.Scene(); 
+            const camera = new THREE.PerspectiveCamera(50, container.offsetWidth / container.offsetHeight, 0.1, 100); 
+            camera.position.z = 4;
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); 
+            renderer.setSize(container.offsetWidth, container.offsetHeight); 
+            container.appendChild(renderer.domElement);
+            const geometry = new THREE.OctahedronGeometry(1.2, 0); 
+            const material = new THREE.MeshStandardMaterial({ color: 0x00ffff, wireframe: true, emissive: 0x00ffff, emissiveIntensity: 0.5 }); 
+            coreMesh = new THREE.Mesh(geometry, material); 
+            scene.add(coreMesh);
+            coreMesh.add(new THREE.Mesh(new THREE.OctahedronGeometry(0.8, 0), new THREE.MeshBasicMaterial({ color: 0x000000 })));
+            pointLight = new THREE.PointLight(0x00ffff, 1, 10); pointLight.position.set(2, 2, 2); scene.add(pointLight); 
+            scene.add(new THREE.AmbientLight(0x404040));
+            function animate() { requestAnimationFrame(animate); if(coreMesh) { coreMesh.rotation.x += 0.005; coreMesh.rotation.y += 0.01; } renderer.render(scene, camera); } animate();
+            window.addEventListener('resize', () => {
+                camera.aspect = container.offsetWidth / container.offsetHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.offsetWidth, container.offsetHeight);
+            });
+        }
+        function updateCoreColor(hex) { if(!coreMesh) return; coreMesh.material.color.setHex(hex); coreMesh.material.emissive.setHex(hex); pointLight.color.setHex(hex); }
+    </script>
+</body>
+</html>

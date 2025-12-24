@@ -1,0 +1,313 @@
+<!-- most of the coordinates and numbers of the HTML and CSS Generated using an SVG Circle Generator online and other websites -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEW USER // DIGITAL DOPPELGÄNGER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #a020f0;  
+            --primary-dim: rgba(160, 32, 240, 0.1);
+            --secondary: #00ffff; 
+            --secondary-dim: rgba(0, 255, 255, 0.1);
+            --bg: #030305;
+            --panel-bg: rgba(10, 10, 12, 0.9);
+            --error: #ff0055;
+            --success: #00ffaa;
+            --font-head: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+        }
+
+        body {
+            color: var(--secondary);
+            font-family: var(--font-body); 
+            /* Perfect Centering Logic */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            min-height: 100dvh; /* Adjusts for mobile browser toolbars */
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .cyber-grid {
+            position: fixed; top: 0; left: 0; width: 200vw; height: 200vh;
+            background-image: linear-gradient(var(--primary-dim) 1px, transparent 1px), linear-gradient(90deg, var(--primary-dim) 1px, transparent 1px);
+            background-size: 60px 60px; background-position: center center;
+            transform: perspective(300px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+            animation: grid-move 5s linear infinite; z-index: -2; opacity: 0.6; pointer-events: none;
+        }
+        @keyframes grid-move { 0% { transform: perspective(300px) rotateX(60deg) translateY(0) translateZ(-200px); } 100% { transform: perspective(300px) rotateX(60deg) translateY(60px) translateZ(-200px); } }
+
+        .vignette {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 30%, var(--bg) 90%);
+            z-index: -1; pointer-events: none;
+        }
+
+        .login-frame {
+            position: relative; 
+            width: 100%; 
+            max-width: 450px; 
+            padding: 2px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+            box-shadow: 0 0 40px rgba(160, 32, 240, 0.4);
+            animation: frame-entrance 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            opacity: 0; transform: scale(0.9);
+        }
+        @keyframes frame-entrance { to { opacity: 1; transform: scale(1); } }
+
+        .login-panel {
+            background: var(--panel-bg); 
+            backdrop-filter: blur(15px); 
+            padding: 10% 8%;
+            clip-path: polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px);
+            position: relative; z-index: 1;
+            min-height: 520px;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .scanner-line {
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--secondary); box-shadow: 0 0 10px var(--secondary);
+            animation: scan 3s ease-in-out infinite; z-index: 2; opacity: 0.5; pointer-events: none;
+        }
+        @keyframes scan { 0%, 100% { top: 0%; opacity: 0; } 50% { opacity: 0.8; } 100% { top: 100%; opacity: 0; } }
+
+        h1 {
+            font-family: var(--font-head); text-align: center; margin: 0 0 5px 0; color: #fff;
+            text-transform: uppercase; letter-spacing: 2px; 
+            font-size: clamp(1.2rem, 5vw, 1.6rem); 
+            text-shadow: 0 0 10px var(--primary);
+        }
+        
+        .subtitle {
+            text-align: center; display: block; 
+            font-size: clamp(0.7rem, 2vw, 0.8rem); 
+            color: var(--secondary);
+            letter-spacing: 2px; margin-bottom: 30px; opacity: 0.8;
+        }
+
+        .input-group { position: relative; margin-bottom: 25px; }
+        .input-group label {
+            position: absolute; top: -10px; left: 10px; background: var(--bg); padding: 0 5px;
+            font-size: 0.75rem; color: var(--secondary); font-family: var(--font-head); letter-spacing: 1px; z-index: 2;
+        }
+        .cyber-input {
+            width: 100%; background: rgba(0,0,0,0.5); border: 1px solid #333; color: #fff;
+            padding: 15px; font-family: var(--font-body); font-size: 1rem; outline: none;
+            transition: all 0.3s; border-left: 3px solid #333;
+        }
+        .cyber-input:focus { 
+            border-color: var(--secondary); 
+            border-left: 3px solid var(--secondary); 
+            box-shadow: inset 5px 0 15px -5px rgba(0, 255, 255, 0.2); 
+        }
+
+        .cyber-btn {
+            width: 100%; padding: 15px; background: transparent; color: var(--secondary);
+            border: 1px solid var(--secondary); font-family: var(--font-head); font-weight: 700;
+            letter-spacing: 2px; cursor: pointer; position: relative; overflow: hidden;
+            transition: 0.3s; text-transform: uppercase; font-size: 0.9rem;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+        .cyber-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: var(--secondary); z-index: -1; transition: 0.4s;
+        }
+        .cyber-btn:hover::before { left: 0; }
+        .cyber-btn:hover { color: #000; box-shadow: 0 0 20px var(--secondary); border-color: transparent; }
+        .cyber-btn:disabled { border-color: #555; color: #555; cursor: not-allowed; }
+
+        .status-box { margin-top: 20px; font-size: 0.85rem; text-align: center; min-height: 20px; }
+        .status-error { color: var(--error); text-shadow: 0 0 5px var(--error); }
+        .status-success { color: var(--success); text-shadow: 0 0 5px var(--success); }
+        .status-loading { color: var(--secondary); animation: pulse 1s infinite; }
+
+        .links {
+            margin-top: 25px; text-align: center; font-size: 0.85rem;
+            border-top: 1px solid #333; padding-top: 15px;
+        }
+        .links a { color: #888; text-decoration: none; transition: 0.3s; text-transform: uppercase; }
+        .links a:hover { color: var(--primary); text-shadow: 0 0 8px var(--primary); }
+
+        .deco-corner { position: absolute; width: 12px; height: 12px; border: 2px solid var(--secondary); pointer-events: none; }
+        .tl { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+        .tr { top: 12px; right: 12px; border-left: none; border-bottom: none; }
+        .bl { bottom: 12px; left: 12px; border-right: none; border-top: none; }
+        .br { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+
+        #verification-ui { display: none; flex-direction: column; align-items: center; text-align: center; }
+        .pulse-text { color: var(--primary); font-size: 1.1rem; margin-bottom: 20px; animation: pulse 1s infinite alternate; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        /* Mobile Adjustments */
+        @media (max-width: 480px) {
+            .login-panel { padding: 40px 20px; min-height: auto; }
+            h1 { letter-spacing: 1px; }
+            .cyber-input { padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cyber-grid"></div>
+    <div class="vignette"></div>
+
+    <div class="login-frame">
+        <div class="login-panel">
+            <div class="deco-corner tl"></div><div class="deco-corner tr"></div>
+            <div class="deco-corner bl"></div><div class="deco-corner br"></div>
+            <div class="scanner-line"></div>
+
+            <div id="registration-content">
+                <h1 id="glitch-title" data-text="IDENTITY INITIALIZATION">IDENTITY INITIALIZATION</h1>
+                <span class="subtitle" id="subtitle">CREATE NEW DIGITAL FOOTPRINT</span>
+
+                <form id="register-form">
+                    <div class="input-group">
+                        <label>OPERATOR ALIAS</label>
+                        <input type="text" id="username" class="cyber-input" placeholder=">> ENTER ALIAS" autocomplete="off" required>
+                    </div>
+                    <div class="input-group">
+                        <label>CONTACT UPLINK</label>
+                        <input type="email" id="email" class="cyber-input" placeholder=">> ENTER EMAIL" autocomplete="off" required>
+                    </div>
+                    <div class="input-group">
+                        <label>SECURITY KEY</label>
+                        <input type="password" id="password" class="cyber-input" placeholder=">> MIN 6 CHARS" minlength="6" required>
+                    </div>
+                    <button type="submit" id="register-button" class="cyber-btn">GENERATE IDENTITY</button>
+                    <div class="links">
+                        <a href="login.html">EXISTING USER? <span style="color:var(--secondary)">ACCESS TERMINAL</span></a>
+                    </div>
+                </form>
+            </div>
+
+            <div id="verification-ui">
+                <h2 style="color:var(--success); margin:0; font-family: var(--font-head); font-size: 1.2rem;">IDENTITY GENERATED</h2>
+                <p style="color: #fff; line-height: 1.5; margin: 20px 0; font-size: 0.9rem;">
+                    VERIFICATION LINK SENT TO:<br>
+                    <span id="sent-email-display" style="color: var(--primary); font-weight: bold; font-size:1.1rem;"></span>
+                </p>
+                <div class="pulse-text">WAITING FOR UPLINK...</div>
+                <p style="font-size: 0.75rem; color: #888; margin-bottom: 20px; letter-spacing: 1px;">
+                    ACCESS DENIED UNTIL VERIFICATION.<br>
+                    CHECK SPAM FILTERS.
+                </p>
+                <a href="login.html" class="cyber-btn" style="text-align:center; text-decoration: none; display: block;">RETURN TO TERMINAL</a>
+            </div>
+
+            <div id="register-status" class="status-box">WAITING FOR INPUT...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { firebaseConfig, AudioSys } from "./config.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        const titleElement = document.getElementById('glitch-title');
+        const originalText = titleElement.getAttribute('data-text');
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@#$%&";
+        
+        function triggerGlitch() {
+            let iterations = 0;
+            const interval = setInterval(() => {
+                titleElement.innerText = originalText.split("").map((letter, index) => {
+                    if(index < iterations) return originalText[index];
+                    return chars[Math.floor(Math.random() * chars.length)];
+                }).join("");
+                if(iterations >= originalText.length) clearInterval(interval);
+                iterations += 1/3; 
+            }, 30);
+        }
+        triggerGlitch();
+
+        document.body.addEventListener('click', () => AudioSys.init(), { once: true });
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        const registerForm = document.getElementById('register-form');
+        const registrationContent = document.getElementById('registration-content');
+        const verificationUI = document.getElementById('verification-ui');
+        const statusBox = document.getElementById('register-status');
+        const regBtn = document.getElementById('register-button');
+        const sentEmailDisplay = document.getElementById('sent-email-display');
+
+        function setStatus(msg, type) {
+            statusBox.textContent = msg;
+            statusBox.className = 'status-box';
+            if(type) statusBox.classList.add(`status-${type}`);
+            if(type === 'loading') {
+                regBtn.disabled = true; regBtn.innerHTML = "PROCESSING...";
+            } else {
+                regBtn.disabled = false; regBtn.innerHTML = "GENERATE IDENTITY";
+            }
+        }
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            AudioSys.play('click');
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            setStatus("CREATING IDENTITY...", "loading");
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                await updateProfile(user, { displayName: username });
+
+                await setDoc(doc(db, "users", user.uid), {
+                    email: email,
+                    credits: 250,
+                    stats: {iq: 100, logic: 50},
+                    history: [],
+                    tasks: [],
+                    inventory: [],
+                    createdAt: Date.now()
+                });
+
+                setStatus("TRANSMITTING SIGNAL...", "loading");
+                await sendEmailVerification(user);
+                await signOut(auth);
+
+                AudioSys.play('success');
+                registrationContent.style.display = 'none';
+                verificationUI.style.display = 'flex';
+                sentEmailDisplay.textContent = email;
+                setStatus("SIGNAL SENT. VERIFY TO CONTINUE.", "success");
+
+            } catch (error) {
+                console.error(error);
+                AudioSys.play('error');
+                let msg = "GENERATION FAILED";
+                if(error.code === 'auth/email-already-in-use') msg = "ERROR: EMAIL ALREADY REGISTERED";
+                if(error.code === 'auth/weak-password') msg = "ERROR: WEAK PASSWORD";
+                setStatus(msg, "error");
+            }
+        });
+    </script>
+</body>
+</html>
