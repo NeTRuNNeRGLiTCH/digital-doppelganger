@@ -32,7 +32,7 @@
   
 🔧 Installation & Setup
   Clone & Install Dependencies:
-  git clone https://github.com/your-username/digital-doppelganger.git
+  git clone https://github.com/NeTRuNNeRGLiTCH/digital-doppelganger.git
   cd digital-doppelganger
   npm install
   Environment Configuration:
