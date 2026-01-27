@@ -18,7 +18,7 @@
   🛠 Tech Stack
     Frontend: HTML5, CSS3 (SCSS logic), JavaScript (ES6+), Three.js.
     Backend: Node.js, Express.js.
-    AI Integration: Google Generative AI (Gemini 1.5/2.5 Flash).
+    AI Integration: Google Generative AI (Gemini 2.5 Flash).
     Database & Auth: Firebase Firestore, Firebase Authentication.
     State Management: Real-time listeners (Snapshots) for multi-device sync.
     
